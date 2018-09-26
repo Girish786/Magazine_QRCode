@@ -1,13 +1,21 @@
 package com.qrcode.sakthikumar.magazineqrcodescanner;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
+import com.blikoon.qrcodescanner.QrCodeActivity;
+
 public class CardMainActivity extends AppCompatActivity {
+
+    private static final int REQUEST_CODE_QR_SCAN = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,20 +23,54 @@ public class CardMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_card_main);
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(resultCode != Activity.RESULT_OK) {
+            Log.d("","COULD NOT GET A GOOD RESULT.");
+            if(data==null)
+                return;
+            String result = data.getStringExtra("com.blikoon.qrcodescanner.error_decoding_image");
+            if( result!=null)
+            {
+                AlertDialog alertDialog = new AlertDialog.Builder(CardMainActivity.this).create();
+                alertDialog.setTitle("Scan Error");
+                alertDialog.setMessage("QR Code could not be scanned");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+            return;
+        }
+
+        if(requestCode == REQUEST_CODE_QR_SCAN) {
+            if(data==null)
+                return;
+            String result = data.getStringExtra("com.blikoon.qrcodescanner.got_qr_scan_relult");
+            Log.d("","Have scan result in your app activity :"+ result);
+            Intent intent = new Intent(CardMainActivity.this, ScanCardActivity.class);
+            intent.putExtra("scanCardSKUNumber", result);
+            startActivity(intent);
+        }
+    }
+
     //Button Action Methods
     public void actionOnVersionOne(View view) {
-        Intent scanCardActivity = new Intent(getApplicationContext(), ScanCardActivity.class);
-        startActivity(scanCardActivity);
+        Intent i = new Intent(CardMainActivity.this, QrCodeActivity.class);
+        startActivityForResult( i,REQUEST_CODE_QR_SCAN);
     }
 
     public void actionOnVersionTwo(View view) {
-        Intent scanCardActivity = new Intent(getApplicationContext(), ScanCardActivity.class);
-        startActivity(scanCardActivity);
+        Intent i = new Intent(CardMainActivity.this, QrCodeActivity.class);
+        startActivityForResult( i,REQUEST_CODE_QR_SCAN);
     }
 
     public void actionOnVersionThree(View view) {
-        Intent scanCardActivity = new Intent(getApplicationContext(), ScanCardActivity.class);
-        startActivity(scanCardActivity);
+        Intent i = new Intent(CardMainActivity.this, QrCodeActivity.class);
+        startActivityForResult( i,REQUEST_CODE_QR_SCAN);
     }
 
     public void actionOnCancel(View view) {

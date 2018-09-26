@@ -1,8 +1,10 @@
 package com.qrcode.sakthikumar.magazineqrcodescanner;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -67,6 +69,7 @@ public class ScanCardActivity extends AppCompatActivity {
     static Uri thirdLocalVideo;
     static Uri audioUri;
     static String redirect_url;
+    String scanCardSKUNumber;
     ArrayList<VideoURI> videoUrls = new ArrayList<>();
     JSONArray videoJsonArray = new JSONArray();
 
@@ -93,6 +96,11 @@ public class ScanCardActivity extends AppCompatActivity {
         isThirdVideoDownloaded = false;
 
         actionOnCheckPermission(permissionBtn);
+
+        Intent intent = getIntent();
+        if (intent!=null) {
+            scanCardSKUNumber = intent.getStringExtra("scanCardSKUNumber");
+        }
     }
 
     @Override
@@ -179,9 +187,6 @@ public class ScanCardActivity extends AppCompatActivity {
                     dialog.show();
                     actioOnGetAudioUrl();
                     getVideoUrlsFromServer();
-//                    downloadFirstVideo();
-//                    downloadSecondVideo();
-//                    downloadThirdVideo();
                 } else {
                     // Permission Denied
                     permissionBtn.setVisibility(View.VISIBLE);
@@ -231,9 +236,6 @@ public class ScanCardActivity extends AppCompatActivity {
                 dialog.show();
                 actioOnGetAudioUrl();
                 getVideoUrlsFromServer();
-//                downloadFirstVideo();
-//                downloadSecondVideo();
-//                downloadThirdVideo();
             } else {
                 permissionBtn.setVisibility(View.VISIBLE);
                 permissionBtn.setText("Try Again");
@@ -279,7 +281,6 @@ public class ScanCardActivity extends AppCompatActivity {
             public void run() {
                 mTimerHandler.post(new Runnable() {
                     public void run() {
-//                        Toast.makeText(MainActivity.this, "5 Sec Completed", Toast.LENGTH_SHORT).show();
                         currentVideoPlaying = 1;
                         playBackgroudVideo();
                         stopTimer();
@@ -297,7 +298,6 @@ public class ScanCardActivity extends AppCompatActivity {
             public void run() {
                 m2TimerHandler.post(new Runnable() {
                     public void run() {
-//                        Toast.makeText(MainActivity.this, "5 Sec Completed", Toast.LENGTH_SHORT).show();
                         fullScreeGifView.setVisibility(View.GONE);
                         stopM2Timer();
                     }
@@ -314,18 +314,7 @@ public class ScanCardActivity extends AppCompatActivity {
             return;
         }
 
-
         vvVideo.setVideoURI(videoUrls.get(currentVideoPlaying - 1).uri);
-
-//        String vidroUrl = "";
-//        if (currentVideoPlaying == 1) {
-//            vvVideo.setVideoURI(firstLocalVideo);
-//        } else if (currentVideoPlaying == 2) {
-//            vvVideo.setVideoURI(secondLocalVideo);
-//        } else if (currentVideoPlaying == 3) {
-//            vvVideo.setVideoURI(thirdLocalVideo);
-//        }
-
         vvVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -353,6 +342,7 @@ public class ScanCardActivity extends AppCompatActivity {
     private void killMediaPlayer() {
         if (mediaPlayer != null) {
             try {
+                mediaPlayer.stop();
                 mediaPlayer.reset();
                 mediaPlayer.release();
                 mediaPlayer = null;
@@ -381,177 +371,6 @@ public class ScanCardActivity extends AppCompatActivity {
             playBackgroudVideo();
         }
     }
-
-
-//    private void downloadFirstVideo() {
-//        Thread thread = new Thread(new Runnable() {
-//            public void run() {
-//                try {
-//                    URL url = new URL("http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/video_cropped_1.mp4");
-//                    HttpURLConnection c = (HttpURLConnection) url.openConnection();
-//                    c.setRequestMethod("GET");
-//                    c.setDoOutput(true);
-//                    c.connect();
-//
-//                    String PATH = Environment.getExternalStorageDirectory().toString()
-//                            + "/load";
-//                    Log.v("LOG_TAG", "PATH: " + PATH);
-//
-//                    File file = new File(PATH);
-//                    file.mkdirs();
-//                    File outputFile = new File(file, "First_Video.mp4");
-//                    FileOutputStream fos = new FileOutputStream(outputFile);
-//                    InputStream is = c.getInputStream();
-//
-//                    byte[] buffer = new byte[4096];
-//                    int len1 = 0;
-//
-//                    while ((len1 = is.read(buffer)) != -1) {
-//                        fos.write(buffer, 0, len1);
-//                    }
-//
-//                    fos.close();
-//                    is.close();
-//                    firstLocalVideo = Uri.parse(Environment.getExternalStorageDirectory().toString() + "/load/" + "First_Video.mp4");
-//                    isFirstVideoDownloaded = true;
-//
-//
-//                    runOnUiThread(new Runnable() {
-//                        public void run() {
-////                            Toast.makeText(ScanCardActivity.this, "Downloading 1st video completed!!!", Toast.LENGTH_SHORT).show();
-//                            hideProgressView();
-//                        }
-//                    });
-//
-//
-//                } catch (final IOException e) {
-////                    runOnUiThread(new Runnable() {
-////                        public void run() {
-////                            Toast.makeText(ScanCardActivity.this, "Error Found 1st Video: " + e.getMessage().toString(), Toast.LENGTH_SHORT).show();
-////                        }
-////                    });
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        });
-//
-//        thread.start();
-//    }
-
-
-//    private void downloadSecondVideo() {
-//        Thread thread = new Thread(new Runnable() {
-//            public void run() {
-//                try {
-//                    URL url = new URL("http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/video_cropped_2.mp4");
-//                    HttpURLConnection c = (HttpURLConnection) url.openConnection();
-//                    c.setRequestMethod("GET");
-//                    c.setDoOutput(true);
-//                    c.connect();
-//
-//                    String PATH = Environment.getExternalStorageDirectory().toString()
-//                            + "/load";
-//                    Log.v("LOG_TAG", "PATH: " + PATH);
-//
-//                    File file = new File(PATH);
-//                    file.mkdirs();
-//                    File outputFile = new File(file, "Second_Video.mp4");
-//                    FileOutputStream fos = new FileOutputStream(outputFile);
-//                    InputStream is = c.getInputStream();
-//
-//                    byte[] buffer = new byte[4096];
-//                    int len1 = 0;
-//
-//                    while ((len1 = is.read(buffer)) != -1) {
-//                        fos.write(buffer, 0, len1);
-//                    }
-//
-//                    fos.close();
-//                    is.close();
-//                    secondLocalVideo = Uri.parse(Environment.getExternalStorageDirectory().toString() + "/load/" + "Second_Video.mp4");
-//                    isSecondVideoDownloaded = true;
-//
-//                    runOnUiThread(new Runnable() {
-//                        public void run() {
-////                            Toast.makeText(ScanCardActivity.this, "Downloading 2nd video completed!!!", Toast.LENGTH_SHORT).show();
-//                            hideProgressView();
-//                        }
-//                    });
-//
-//
-//                } catch (final IOException e) {
-////                    runOnUiThread(new Runnable() {
-////                        public void run() {
-////                            Toast.makeText(ScanCardActivity.this, "Error Found 2nd Video: " + e.getMessage().toString(), Toast.LENGTH_SHORT).show();
-////                        }
-////                    });
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        });
-//
-//        thread.start();
-//    }
-
-
-//    private void downloadThirdVideo() {
-//        Thread thread = new Thread(new Runnable() {
-//            public void run() {
-//                try {
-//                    URL url = new URL("http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/video_cropped_3.mp4");
-//                    HttpURLConnection c = (HttpURLConnection) url.openConnection();
-//                    c.setRequestMethod("GET");
-//                    c.setDoOutput(true);
-//                    c.connect();
-//
-//                    String PATH = Environment.getExternalStorageDirectory().toString()
-//                            + "/load";
-//                    Log.v("LOG_TAG", "PATH: " + PATH);
-//
-//                    File file = new File(PATH);
-//                    file.mkdirs();
-//                    File outputFile = new File(file, "Third_Video.mp4");
-//                    FileOutputStream fos = new FileOutputStream(outputFile);
-//                    InputStream is = c.getInputStream();
-//
-//                    byte[] buffer = new byte[4096];
-//                    int len1 = 0;
-//
-//                    while ((len1 = is.read(buffer)) != -1) {
-//                        fos.write(buffer, 0, len1);
-//                    }
-//
-//                    fos.close();
-//                    is.close();
-//                    thirdLocalVideo = Uri.parse(Environment.getExternalStorageDirectory().toString() + "/load/" + "Third_Video.mp4");
-//                    isThirdVideoDownloaded = true;
-//
-//
-//                    runOnUiThread(new Runnable() {
-//                        public void run() {
-////                            Toast.makeText(ScanCardActivity.this, "Downloading 3nd video completed!!!", Toast.LENGTH_SHORT).show();
-//                            hideProgressView();
-//                        }
-//                    });
-//
-//
-//                } catch (final IOException e) {
-////                    runOnUiThread(new Runnable() {
-////                        public void run() {
-////                            Toast.makeText(ScanCardActivity.this, "Error Found 3rd Video: " + e.getMessage().toString(), Toast.LENGTH_SHORT).show();
-////                        }
-////                    });
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        });
-//
-//        thread.start();
-//    }
-//
 
     //------
 
@@ -650,13 +469,33 @@ public class ScanCardActivity extends AppCompatActivity {
                         Log.e("Response", response.toString());
                         try {
                             JSONObject obj = new JSONObject(response);
-                            redirect_url = obj.getString("redirect_url");
-                            videoJsonArray = obj.getJSONArray("videodetails");
+                            String message = obj.getString("message");
+                            if (obj.isNull("videodetails")) {
+                                hideProgressView();
+                                killMediaPlayer();
+                                AlertDialog.Builder builder;
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    builder = new AlertDialog.Builder(ScanCardActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+                                } else {
+                                    builder = new AlertDialog.Builder(ScanCardActivity.this);
+                                }
+                                builder.setTitle("Alert")
+                                        .setMessage(message)
+                                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                finish();
+                                            }
+                                        })
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .show();
+                            } else {
+                                redirect_url = obj.getString("redirect_url");
+                                videoJsonArray = obj.getJSONArray("videodetails");
 
-                            for (int i = 0, size = videoJsonArray.length(); i < size; i++) {
-                                downloadAllVideos(videoJsonArray.getJSONObject(i).getString("scancard_video_url"), videoJsonArray.getJSONObject(i).getString("scancard_id"));
+                                for (int i = 0, size = videoJsonArray.length(); i < size; i++) {
+                                    downloadAllVideos(videoJsonArray.getJSONObject(i).getString("scancard_video_url"), videoJsonArray.getJSONObject(i).getString("scancard_id"));
+                                }
                             }
-
                         } catch (JSONException e) {
                             Log.e("MYAPP", "Email Address or Password is wrong.", e);
                         }
@@ -671,7 +510,7 @@ public class ScanCardActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("scancardskunumber", "AABB1122");
+                params.put("scancardskunumber", scanCardSKUNumber != null ? scanCardSKUNumber : "");
                 return params;
             }
         };
@@ -713,17 +552,11 @@ public class ScanCardActivity extends AppCompatActivity {
                     videoURI.uri = Uri.parse(Environment.getExternalStorageDirectory().toString() + "/load/" + name + ".mp4");
                     videoUrls.add(videoURI);
                     Collections.sort(videoUrls, new CustomComparator());
-//                    thirdLocalVideo = Uri.parse(Environment.getExternalStorageDirectory().toString() + "/load/" + name + ".mp4");
-//                    isThirdVideoDownloaded = true;
-
-
                     runOnUiThread(new Runnable() {
                         public void run() {
                             hideProgressView();
                         }
                     });
-
-
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
