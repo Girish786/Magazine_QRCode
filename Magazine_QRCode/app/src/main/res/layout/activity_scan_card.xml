@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+xmlns:custom="http://schemas.android.com/apk/res-auto"
+tools:context=".ScanCardActivity">
+
+<VideoView
+    android:id="@+id/vvVideo"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="fill"
+    />
+
+<com.cunoraz.gifview.library.GifView
+    android:id="@+id/gifPlayer_one"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="0dp"
+    android:layout_marginTop="0dp"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    custom:gif="@mipmap/new_sparkling" />
+
+<com.cunoraz.gifview.library.GifView
+    android:id="@+id/gifPlayer_two"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="0dp"
+    android:layout_marginTop="0dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    custom:gif="@mipmap/new_sparkling" />
+
+<com.cunoraz.gifview.library.GifView
+    android:id="@+id/gifPlayer_three"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="0dp"
+    android:layout_marginStart="0dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    custom:gif="@mipmap/new_sparkling" />
+
+<com.cunoraz.gifview.library.GifView
+    android:id="@+id/gifPlayer_four"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="0dp"
+    android:layout_marginEnd="0dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    custom:gif="@mipmap/new_sparkling" />
+
+<com.cunoraz.gifview.library.GifView
+    android:id="@+id/gifPlayer_five"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="0dp"
+    android:visibility="gone"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    custom:gif="@mipmap/new_sparkling" />
+
+<com.cunoraz.gifview.library.GifView
+    android:id="@+id/gifPlayer_six"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="32dp"
+    android:visibility="gone"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    custom:gif="@mipmap/new_sparkling" />
+
+<com.cunoraz.gifview.library.GifView
+    android:id="@+id/gifPlayer_seven"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="32dp"
+    android:visibility="gone"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    custom:gif="@mipmap/new_sparkling" />
+
+<com.cunoraz.gifview.library.GifView
+    android:id="@+id/gifPlayer_eight"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:visibility="gone"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    custom:gif="@mipmap/new_sparkling" />
+
+<Button
+    android:id="@+id/storage_permission_btn"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+
+    android:layout_marginBottom="32dp"
+    android:layout_marginEnd="32dp"
+    android:layout_marginStart="32dp"
+    android:background="@color/colorPrimary"
+    android:text="Storage Permission"
+    android:onClick="actionOnCheckPermission"
+    android:textColor="@android:color/white"
+    android:textSize="15dp"
+    app:layout_constraintBottom_toBottomOf="@+id/vvVideo"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

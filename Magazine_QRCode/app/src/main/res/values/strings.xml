@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Unique Voices</string>
+    <string name="forgot_password"><u>Forgot Password</u></string>
+    <string name="create_account"><u>No Account? Create Account</u></string>
+</resources>
