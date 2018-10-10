@@ -97,14 +97,12 @@ public class ScannedBarcodeActivity extends AppCompatActivity {
 
     public void getVideoUrl() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        showProgressDialog();
 
         StringRequest request = new StringRequest(Request.Method.POST, Constants.SCAN_BOARD_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.e("Response", response.toString());
-                        hideProgressDialog();
                         processResponse(response);
                     }
                 },
@@ -112,7 +110,6 @@ public class ScannedBarcodeActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("Response", error.toString());
-                        hideProgressDialog();
                         Toast.makeText(getApplicationContext(), error.toString(),
                                 Toast.LENGTH_LONG).show();
                     }

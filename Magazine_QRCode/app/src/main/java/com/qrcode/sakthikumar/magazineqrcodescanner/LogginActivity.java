@@ -194,14 +194,12 @@ public class LogginActivity extends AppCompatActivity {
         } else {
 
             RequestQueue requestQueue = Volley.newRequestQueue(this);
-            showProgressDialog();
 
             StringRequest request = new StringRequest(Request.Method.POST, Constants.SIGN_IN_URL,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             Log.e("Response", response.toString());
-                            hideProgressDialog();
                             processResponse(response);
                         }
                     },
@@ -209,7 +207,6 @@ public class LogginActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.e("Response", error.toString());
-                            hideProgressDialog();
                             showErrorMessage("log in - info entered incorrectly");
                         }
                     }) {

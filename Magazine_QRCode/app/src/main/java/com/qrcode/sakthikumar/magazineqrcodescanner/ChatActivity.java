@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -110,7 +111,16 @@ public class ChatActivity extends AppCompatActivity {
                     return;
                 }
 
-                sendChatMessages();
+                ChatMessage chatMessage = new ChatMessage();
+                chatMessage.id = Long.toString(System.currentTimeMillis());
+                chatMessage.message = messageET.getText().toString();
+                chatMessage.dateTime = "";
+                chatMessage.msg_from_id = PrefManager.getInstance(getApplicationContext()).getUserId();
+                chatMessage.msg_to_id = receiverId;
+                displayMessage(chatMessage);
+
+                sendChatMessages(messageET.getText().toString());
+                messageET.setText("");
             }
         });
     }
@@ -188,34 +198,32 @@ public class ChatActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
-    public void sendChatMessages() {
+    public void sendChatMessages(final String message) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        showProgressDialog();
 
         StringRequest request = new StringRequest(Request.Method.POST, Constants.CREATE_CHAT_ROOM_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        hideProgressDialog();
                         Log.e("Response", response.toString());
                         Gson gson = new Gson();
                         ChatMessageResponse chatResponse = gson.fromJson(response.toString(), ChatMessageResponse.class);
                         if (chatResponse.chat_creation_status.contains("Chat created successfully. Chat entered into DB properly")) {
-                            ChatMessage chatMessage = new ChatMessage();
-                            chatMessage.id = Long.toString(System.currentTimeMillis());
-                            chatMessage.message = messageET.getText().toString();
-                            chatMessage.dateTime = "";
-                            chatMessage.msg_from_id = PrefManager.getInstance(getApplicationContext()).getUserId();
-                            chatMessage.msg_to_id = receiverId;
-                            displayMessage(chatMessage);
-                            messageET.setText("");
+                            Toast.makeText(ChatActivity.this, "Message sent successfully...", Toast.LENGTH_SHORT).show();
+//                            ChatMessage chatMessage = new ChatMessage();
+//                            chatMessage.id = Long.toString(System.currentTimeMillis());
+//                            chatMessage.message = messageET.getText().toString();
+//                            chatMessage.dateTime = "";
+//                            chatMessage.msg_from_id = PrefManager.getInstance(getApplicationContext()).getUserId();
+//                            chatMessage.msg_to_id = receiverId;
+//                            displayMessage(chatMessage);
+//                            messageET.setText("");
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        hideProgressDialog();
                         Log.e("Response", error.toString());
                     }
                 }) {
@@ -224,7 +232,7 @@ public class ChatActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("user_from_id", PrefManager.getInstance(getApplicationContext()).getUserId());
                 params.put("user_to_id", receiverId);
-                params.put("user_message", messageET.getText().toString());
+                params.put("user_message", message);
                 return params;
             }
         };
