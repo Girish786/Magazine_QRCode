@@ -130,11 +130,10 @@ public class QRCodeScanActivity extends AppCompatActivity {
 
 
     public void getVideoUrl() {
-        String url = "http://uvapps.youniquevoices.com/index.php/uvappsapicontrol/magazinevideoaccess";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         showProgressDialog();
 
-        StringRequest request = new StringRequest(Request.Method.POST, url,
+        StringRequest request = new StringRequest(Request.Method.POST, Constants.SCAN_BOARD_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

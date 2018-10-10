@@ -2,6 +2,9 @@
 <resources>
     <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#ff4081</color>
+    <color name="colorAccent">#303F9F</color>
     <color name="goldenColor">#FFD700</color>
+    <color name="in_message_color">#f0efef</color>
+    <color name="out_message_color">#137af7</color>
+    <color name="GolderColor">#bda577</color>
 </resources>

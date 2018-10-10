@@ -66,17 +66,19 @@ public class MainActivity extends AppCompatActivity {
         startActivity(cardActivityIntent );
     }
 
+    public void actionOnChatWithFriends(View v) {
+        Intent cardActivityIntent = new Intent(getApplicationContext(), ChatMainActivity.class);
+        startActivity(cardActivityIntent );
+    }
+
     public void actionOnScanAMagazine(View v) {
         Intent goToNextActivity = new Intent(getApplicationContext(), QRCodeScanActivity.class);
         startActivity(goToNextActivity);
     }
 
     public void actionOnLogOut(View v) {
-        SharedPreferences preferences = this.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("EmailId", "");
-        editor.commit();
-
+        PrefManager.getInstance(getApplicationContext()).setUserId("");
+        PrefManager.getInstance(getApplicationContext()).setUserName("");
         ActivityManager mngr = (ActivityManager) getSystemService( ACTIVITY_SERVICE );
         List<ActivityManager.RunningTaskInfo> taskList = mngr.getRunningTasks(10);
         if(taskList.get(0).numActivities == 1 && taskList.get(0).topActivity.getClassName().equals(this.getClass().getName())) {

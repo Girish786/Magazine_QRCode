@@ -40,6 +40,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static com.qrcode.sakthikumar.magazineqrcodescanner.Constants.SIGN_IN_URL;
+
 public class LogginActivity extends AppCompatActivity {
 
     VideoView vvVideo;
@@ -191,11 +193,10 @@ public class LogginActivity extends AppCompatActivity {
             showErrorMessage("enter your password");
         } else {
 
-            String url = "http://uvapps.youniquevoices.com/index.php/uvappsapicontrol/signin";
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             showProgressDialog();
 
-            StringRequest request = new StringRequest(Request.Method.POST, url,
+            StringRequest request = new StringRequest(Request.Method.POST, Constants.SIGN_IN_URL,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -252,10 +253,8 @@ public class LogginActivity extends AppCompatActivity {
             JSONArray array = obj.getJSONArray("userdata");
 
             if (array.length() != 0) {
-                SharedPreferences preferences = this.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("EmailId", array.getJSONObject(0).getString("user_email"));
-                editor.commit();
+                PrefManager.getInstance(getApplicationContext()).setUserId(array.getJSONObject(0).getString("user_id"));
+                PrefManager.getInstance(getApplicationContext()).setUserName(array.getJSONObject(0).getString("user_name"));
 
                 Intent goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(goToNextActivity);

@@ -16,11 +16,11 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="250dp"
-        android:layout_height="140dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,9 +47,9 @@
         android:id="@+id/scanAMagazinBtn"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="60dp"
         android:layout_marginStart="60dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="60dp"
         android:background="@drawable/button_border"
         android:onClick="actionOnScanAMagazine"
         android:text="Scan A Magazine"
@@ -60,20 +60,36 @@
         app:layout_constraintTop_toBottomOf="@+id/scanCardABtn" />
 
     <Button
-        android:id="@+id/loginOutBtn"
+        android:id="@+id/scanAMagazinBtn2"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="60dp"
         android:layout_marginStart="60dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/button_border"
+        android:onClick="actionOnChatWithFriends"
+        android:text="chat with friends"
+        android:textColor="@android:color/background_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scanAMagazinBtn" />
+
+    <Button
+        android:id="@+id/loginOutBtn"
+        android:layout_width="0dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="60dp"
         android:background="@drawable/button_border"
         android:onClick="actionOnLogOut"
         android:text="Logout"
         android:textColor="@android:color/background_light"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scanAMagazinBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/scanAMagazinBtn2" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toptoolbar"

@@ -13,8 +13,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        SharedPreferences preferences = this.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-        String emaidId = preferences.getString("EmailId", "");
+        String emaidId = PrefManager.getInstance(getApplicationContext()).getUserId();
         Intent intent;
 
         if (emaidId != null && emaidId != "") {
