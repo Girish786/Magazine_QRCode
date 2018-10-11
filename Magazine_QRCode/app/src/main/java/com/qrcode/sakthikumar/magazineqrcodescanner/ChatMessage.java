@@ -16,6 +16,7 @@ public class ChatMessage {
     String msg_to_id;
     @SerializedName("dateTime")
     String dateTime;
+    String status = "pending";
 }
 
 class ChatResponse implements Serializable {

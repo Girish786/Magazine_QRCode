@@ -65,19 +65,19 @@ public class ChatActivity extends AppCompatActivity {
         stopTimer();
     }
 
-    private void stopTimer(){
-        if(mTimer1 != null){
+    private void stopTimer() {
+        if (mTimer1 != null) {
             mTimer1.cancel();
             mTimer1.purge();
         }
     }
 
-    private void startTimer(){
+    private void startTimer() {
         mTimer1 = new Timer();
         mTt1 = new TimerTask() {
             public void run() {
                 mTimerHandler.post(new Runnable() {
-                    public void run(){
+                    public void run() {
                         stopTimer();
                         getAllChatMessages();
                     }
@@ -117,10 +117,10 @@ public class ChatActivity extends AppCompatActivity {
                 chatMessage.dateTime = "";
                 chatMessage.msg_from_id = PrefManager.getInstance(getApplicationContext()).getUserId();
                 chatMessage.msg_to_id = receiverId;
+                chatMessage.status = "pending";
                 displayMessage(chatMessage);
-
-                sendChatMessages(messageET.getText().toString());
                 messageET.setText("");
+                sendChatMessages(chatMessage.message, chatMessage.id);
             }
         });
     }
@@ -173,8 +173,18 @@ public class ChatActivity extends AppCompatActivity {
                         Log.e("Response", response.toString());
                         Gson gson = new Gson();
                         ChatResponse chatResponse = gson.fromJson(response.toString(), ChatResponse.class);
+
+                        ArrayList<ChatMessage> pendingChatMessage = new ArrayList<>();
+                        for (ChatMessage message : chatHistory) {
+                            if (message.status.equals("pending")) {
+                                pendingChatMessage.add(message);
+                            }
+                        }
+
                         chatHistory.clear();
                         chatHistory.addAll(chatResponse.chatHistoryList);
+                        for (ChatMessage message : chatHistory) {  message.status = "done"; }
+                        chatHistory.addAll(pendingChatMessage);
                         displayAllMessages();
                         startTimer();
                     }
@@ -198,7 +208,7 @@ public class ChatActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
-    public void sendChatMessages(final String message) {
+    public void sendChatMessages(final String message, final String messageId) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         StringRequest request = new StringRequest(Request.Method.POST, Constants.CREATE_CHAT_ROOM_URL,
@@ -209,7 +219,13 @@ public class ChatActivity extends AppCompatActivity {
                         Gson gson = new Gson();
                         ChatMessageResponse chatResponse = gson.fromJson(response.toString(), ChatMessageResponse.class);
                         if (chatResponse.chat_creation_status.contains("Chat created successfully. Chat entered into DB properly")) {
-                            Toast.makeText(ChatActivity.this, "Message sent successfully...", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(ChatActivity.this, "Message sent successfully...", Toast.LENGTH_SHORT).show();
+                            for (ChatMessage message : chatHistory) {
+                                if (message.id.equals(messageId)) {
+                                    message.status = "done";
+                                }
+                            }
+
 //                            ChatMessage chatMessage = new ChatMessage();
 //                            chatMessage.id = Long.toString(System.currentTimeMillis());
 //                            chatMessage.message = messageET.getText().toString();
