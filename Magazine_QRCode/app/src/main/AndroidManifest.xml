@@ -16,8 +16,7 @@
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
-    <uses-permission-sdk-23 android:name="android.permission.VIBRATE" />
-
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -68,7 +67,8 @@
         <activity android:name=".ScanCardActivity" />
         <activity android:name=".CardMainActivity" />
         <activity android:name=".ChatMainActivity" />
-        <activity android:name=".ChatActivity"></activity>
+        <activity android:name=".ChatActivity" />
+        <activity android:name=".DecoderActivity"></activity>
     </application>
 
 </manifest>

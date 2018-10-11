@@ -2,6 +2,8 @@ package com.qrcode.sakthikumar.magazineqrcodescanner;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +19,7 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -68,6 +71,7 @@ public class ScanCardActivity extends AppCompatActivity {
     static Uri firstLocalVideo;
     static Uri secondLocalVideo;
     static Uri thirdLocalVideo;
+    static Uri fourthLocalVideo;
     static Uri audioUri;
     static String redirect_url;
     String scanCardSKUNumber;
@@ -179,6 +183,23 @@ public class ScanCardActivity extends AppCompatActivity {
 
             }
         }
+
+        if (fourthLocalVideo != null) {
+            File file = new File(fourthLocalVideo.getPath());
+            file.delete();
+            fourthLocalVideo = null;
+            if (file.exists()) {
+                try {
+                    file.getCanonicalFile().delete();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (file.exists()) {
+                    getApplicationContext().deleteFile(file.getName());
+                }
+
+            }
+        }
     }
 
     @Override
@@ -219,7 +240,12 @@ public class ScanCardActivity extends AppCompatActivity {
                     nextPlay = 4;
                     startTimer();
                     playBackgroudVideo();
-                } else if (nextPlay == 4) {
+                }  else if (nextPlay == 4) {
+                    currentVideoPlaying = 4;
+                    nextPlay = 5;
+                    startTimer();
+                    playBackgroudVideo();
+                } else if (nextPlay == 5) {
                     nextPlay = 2;
                     currentVideoPlaying = 1;
                     if (redirect_url != null) {
@@ -359,11 +385,34 @@ public class ScanCardActivity extends AppCompatActivity {
         fullScreeGifView.setVisibility(View.VISIBLE);
         startTimerForMiddleView();
 
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+//        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+//        } else {
+//            v.vibrate(1000);
+//        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+            Vibrator v1 = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v1.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
-            v.vibrate(1000);
+            try {
+                Vibrator v2 = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                v2.vibrate(1000);
+            } catch (Exception e) {
+                try {
+                    NotificationManager mNotificationManager = (NotificationManager)
+                            this.getSystemService(Context.NOTIFICATION_SERVICE);
+                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+                            this)
+                            .setDefaults(Notification.DEFAULT_VIBRATE);
+                    mBuilder.setAutoCancel(true);
+                    mNotificationManager.notify(1, mBuilder.build());
+                } catch (SecurityException se) {
+                    se.printStackTrace();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
     }
 
@@ -572,6 +621,111 @@ public class ScanCardActivity extends AppCompatActivity {
         thread.start();
     }
 
+    public ArrayList<VideoURI> arragenVideos_one( ArrayList<VideoURI> versione) {
+        ArrayList<VideoURI> versionOne = versione;
+        for (VideoURI uri : videoUrls) {
+            if (uri.name.equals("1")) {
+                if (versionOne.isEmpty()) {
+                    versionOne.add(uri);
+                }
+            } else if (uri.name.equals("2")) {
+                if (versionOne.size() == 1) {
+                    versionOne.add(uri);
+                }
+            } else if (uri.name.equals("3")) {
+                if (versionOne.size() == 2) {
+                    versionOne.add(uri);
+                }
+            } else if (uri.name.equals("4")) {
+                if (versionOne.size() == 3) {
+                    versionOne.add(uri);
+                }
+            }
+        }
+
+        if (versionOne.size() != 4) { arragenVideos_one(versionOne); }
+        return versionOne;
+    }
+
+    public ArrayList<VideoURI> arragenVideos_two( ArrayList<VideoURI> versione) {
+        ArrayList<VideoURI> versionTwo = versione;
+        for (VideoURI uri : videoUrls) {
+            if (uri.name.equals("2")) {
+                if (versionTwo.isEmpty()) {
+                    versionTwo.add(uri);
+                }
+            } else if (uri.name.equals("3")) {
+                if (versionTwo.size() == 1) {
+                    versionTwo.add(uri);
+                }
+            } else if (uri.name.equals("4")) {
+                if (versionTwo.size() == 2) {
+                    versionTwo.add(uri);
+                }
+            } else if (uri.name.equals("1")) {
+                if (versionTwo.size() == 3) {
+                    versionTwo.add(uri);
+                }
+            }
+        }
+
+        if (versionTwo.size() != 4) { arragenVideos_two(versionTwo); }
+        return versionTwo;
+    }
+
+    public ArrayList<VideoURI> arragenVideos_three( ArrayList<VideoURI> versione) {
+        ArrayList<VideoURI> versionThree = versione;
+        for (VideoURI uri : videoUrls) {
+            if (uri.name.equals("3")) {
+                if (versionThree.isEmpty()) {
+                    versionThree.add(uri);
+                }
+            } else if (uri.name.equals("4")) {
+                if (versionThree.size() == 1) {
+                    versionThree.add(uri);
+                }
+            } else if (uri.name.equals("1")) {
+                if (versionThree.size() == 2) {
+                    versionThree.add(uri);
+                }
+            } else if (uri.name.equals("2")) {
+                if (versionThree.size() == 3) {
+                    versionThree.add(uri);
+                }
+            }
+        }
+
+        if (versionThree.size() != 4) { arragenVideos_three(versionThree); }
+        return versionThree;
+    }
+
+    public ArrayList<VideoURI> arragenVideos_four( ArrayList<VideoURI> versione) {
+        ArrayList<VideoURI> versionFour = versione;
+        for (VideoURI uri : videoUrls) {
+            if (uri.name.equals("4")) {
+                if (versionFour.isEmpty()) {
+                    versionFour.add(uri);
+                }
+            } else if (uri.name.equals("3")) {
+                if (versionFour.size() == 1) {
+                    versionFour.add(uri);
+                }
+            } else if (uri.name.equals("2")) {
+                if (versionFour.size() == 2) {
+                    versionFour.add(uri);
+                }
+            } else if (uri.name.equals("1")) {
+                if (versionFour.size() == 3) {
+                    versionFour.add(uri);
+                }
+            }
+        }
+
+        if (versionFour.size() != 4) { arragenVideos_four(versionFour); }
+        return versionFour;
+    }
+
+
     public void arrangeUrlsBasedOnVersionNumber() {
         if (videoUrls.size() != 4) {
             return;
@@ -579,67 +733,23 @@ public class ScanCardActivity extends AppCompatActivity {
 
         switch (versionNumber) {
             case "1":
-                ArrayList<VideoURI> versionOne = new ArrayList<>();
-                for (VideoURI uri : videoUrls) {
-                    if (uri.name.equals("1")) {
-                        versionOne.add(uri);
-                    } else if (uri.name.equals("2"))  {
-                        versionOne.add(uri);
-                    } else if (uri.name.equals("3"))  {
-                        versionOne.add(uri);
-                    } else if (uri.name.equals("4"))  {
-                        versionOne.add(uri);
-                    }
-                }
-                videoUrls = versionOne;
-                break;
+                videoUrls = arragenVideos_one(new ArrayList<VideoURI>());
+                Log.i("", "arrangeUrlsBasedOnVersionNumber: ");
+            break;
 
             case "2":
-                ArrayList<VideoURI> versionTwo = new ArrayList<>();
-                for (VideoURI uri : videoUrls) {
-                    if (uri.name.equals("2")) {
-                        versionTwo.add(uri);
-                    } else if (uri.name.equals("3"))  {
-                        versionTwo.add(uri);
-                    } else if (uri.name.equals("4"))  {
-                        versionTwo.add(uri);
-                    } else if (uri.name.equals("1"))  {
-                        versionTwo.add(uri);
-                    }
-                }
-                videoUrls = versionTwo;
+                videoUrls = arragenVideos_two(new ArrayList<VideoURI>());
+                Log.i("", "arrangeUrlsBasedOnVersionNumber: ");
                 break;
 
             case "3":
-                ArrayList<VideoURI> versionThree = new ArrayList<>();
-                for (VideoURI uri : videoUrls) {
-                    if (uri.name.equals("3")) {
-                        versionThree.add(uri);
-                    } else if (uri.name.equals("4"))  {
-                        versionThree.add(uri);
-                    } else if (uri.name.equals("1"))  {
-                        versionThree.add(uri);
-                    } else if (uri.name.equals("2"))  {
-                        versionThree.add(uri);
-                    }
-                }
-                videoUrls = versionThree;
+                videoUrls = arragenVideos_three(new ArrayList<VideoURI>());
+                Log.i("", "arrangeUrlsBasedOnVersionNumber: ");
                 break;
 
             case "4":
-                ArrayList<VideoURI> versionFour = new ArrayList<>();
-                for (VideoURI uri : videoUrls) {
-                    if (uri.name.equals("4")) {
-                        versionFour.add(uri);
-                    } else if (uri.name.equals("1"))  {
-                        versionFour.add(uri);
-                    } else if (uri.name.equals("2"))  {
-                        versionFour.add(uri);
-                    } else if (uri.name.equals("3"))  {
-                        versionFour.add(uri);
-                    }
-                }
-                videoUrls = versionFour;
+                videoUrls = arragenVideos_four(new ArrayList<VideoURI>());
+                Log.i("", "arrangeUrlsBasedOnVersionNumber: ");
                 break;
 
             default:
