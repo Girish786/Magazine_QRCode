@@ -9,4 +9,5 @@ public class Constants {
     public static final String CREATE_CHAT_ROOM_URL = BASE_URL + "chatcreatechatbetweentwousers";
     public static final String SIGN_IN_URL = BASE_URL + "signin";
     public static final String SCAN_BOARD_URL = BASE_URL + "magazinevideoaccess";
+    public static final String SCAN_CARD_VIDEO_ACCESS_URL = BASE_URL + "scanacardvideoaccess";
 }

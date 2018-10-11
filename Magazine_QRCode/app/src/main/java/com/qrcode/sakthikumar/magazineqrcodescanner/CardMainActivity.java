@@ -17,6 +17,7 @@ import com.blikoon.qrcodescanner.QrCodeActivity;
 public class CardMainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_QR_SCAN = 101;
+    public String versionNumber = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,22 +55,32 @@ public class CardMainActivity extends AppCompatActivity {
             Log.d("","Have scan result in your app activity :"+ result);
             Intent intent = new Intent(CardMainActivity.this, ScanCardActivity.class);
             intent.putExtra("scanCardSKUNumber", result);
+            intent.putExtra("versionNumber", versionNumber);
             startActivity(intent);
         }
     }
 
     //Button Action Methods
     public void actionOnVersionOne(View view) {
+        versionNumber = "1";
         Intent i = new Intent(CardMainActivity.this, QrCodeActivity.class);
         startActivityForResult( i,REQUEST_CODE_QR_SCAN);
     }
 
     public void actionOnVersionTwo(View view) {
+        versionNumber = "2";
         Intent i = new Intent(CardMainActivity.this, QrCodeActivity.class);
         startActivityForResult( i,REQUEST_CODE_QR_SCAN);
     }
 
     public void actionOnVersionThree(View view) {
+        versionNumber = "3";
+        Intent i = new Intent(CardMainActivity.this, QrCodeActivity.class);
+        startActivityForResult( i,REQUEST_CODE_QR_SCAN);
+    }
+
+    public void actionOnVersionFour(View view) {
+        versionNumber = "4";
         Intent i = new Intent(CardMainActivity.this, QrCodeActivity.class);
         startActivityForResult( i,REQUEST_CODE_QR_SCAN);
     }

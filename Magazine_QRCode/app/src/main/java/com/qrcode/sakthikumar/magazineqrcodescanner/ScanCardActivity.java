@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -78,6 +79,7 @@ public class ScanCardActivity extends AppCompatActivity {
     boolean isThirdVideoDownloaded = false;
     boolean isAudioDownloaded = false;
     private ProgressDialog dialog;
+    String versionNumber = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +100,9 @@ public class ScanCardActivity extends AppCompatActivity {
         actionOnCheckPermission(permissionBtn);
 
         Intent intent = getIntent();
-        if (intent!=null) {
+        if (intent != null) {
             scanCardSKUNumber = intent.getStringExtra("scanCardSKUNumber");
+            versionNumber = intent.getStringExtra("versionNumber");
         }
     }
 
@@ -185,7 +188,7 @@ public class ScanCardActivity extends AppCompatActivity {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     permissionBtn.setVisibility(View.GONE);
                     dialog.show();
-                    actioOnGetAudioUrl();
+//                    actioOnGetAudioUrl();
                     getVideoUrlsFromServer();
                 } else {
                     // Permission Denied
@@ -234,7 +237,7 @@ public class ScanCardActivity extends AppCompatActivity {
             permissionBtn.setVisibility(View.GONE);
             if (isNetworkConnected()) {
                 dialog.show();
-                actioOnGetAudioUrl();
+//                actioOnGetAudioUrl();
                 getVideoUrlsFromServer();
             } else {
                 permissionBtn.setVisibility(View.VISIBLE);
@@ -374,39 +377,39 @@ public class ScanCardActivity extends AppCompatActivity {
 
     //------
 
-    public void actioOnGetAudioUrl() {
-        String url = "https://uvapps.youniquevoices.com/index.php/Uvappsapicontrol/backgroundmusicaccess";
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        StringRequest request = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.e("Response", response.toString());
-
-                        try {
-                            JSONObject obj = new JSONObject(response);
-                            JSONArray array = obj.getJSONArray("musicfile");
-
-                            if (array.length() != 0) {
-                                audioUrl = array.getJSONObject(0).getString("bgmusic_file_url");
-                                downloadAudioFromUrl();
-                            }
-                        } catch (JSONException e) {
-                            Log.e("MYAPP", "Email Address or Password is wrong.", e);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Response", error.toString());
-                    }
-                }) {
-        };
-
-        requestQueue.add(request);
-    }
+//    public void actioOnGetAudioUrl() {
+//        String url = "https://uvapps.youniquevoices.com/index.php/Uvappsapicontrol/backgroundmusicaccess";
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//
+//        StringRequest request = new StringRequest(Request.Method.GET, url,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.e("Response", response.toString());
+//
+//                        try {
+//                            JSONObject obj = new JSONObject(response);
+//                            JSONArray array = obj.getJSONArray("musicfile");
+//
+//                            if (array.length() != 0) {
+//                                audioUrl = array.getJSONObject(0).getString("bgmusic_file_url");
+//                                downloadAudioFromUrl();
+//                            }
+//                        } catch (JSONException e) {
+//                            Log.e("MYAPP", "Email Address or Password is wrong.", e);
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Log.e("Response", error.toString());
+//                    }
+//                }) {
+//        };
+//
+//        requestQueue.add(request);
+//    }
 
 
     private void downloadAudioFromUrl() {
@@ -460,9 +463,8 @@ public class ScanCardActivity extends AppCompatActivity {
 
 
     public void getVideoUrlsFromServer() {
-        String url = "https://uvapps.youniquevoices.com/index.php/Uvappsapicontrol/scanacardvideoaccess";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest request = new StringRequest(Request.Method.POST, url,
+        StringRequest request = new StringRequest(Request.Method.POST, Constants.SCAN_CARD_VIDEO_ACCESS_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -490,6 +492,8 @@ public class ScanCardActivity extends AppCompatActivity {
                                         .show();
                             } else {
                                 redirect_url = obj.getString("redirect_url");
+                                audioUrl = obj.getString("bgmusic_url");
+                                downloadAudioFromUrl();
                                 videoJsonArray = obj.getJSONArray("videodetails");
 
                                 for (int i = 0, size = videoJsonArray.length(); i < size; i++) {
@@ -551,7 +555,8 @@ public class ScanCardActivity extends AppCompatActivity {
                     videoURI.name = name;
                     videoURI.uri = Uri.parse(Environment.getExternalStorageDirectory().toString() + "/load/" + name + ".mp4");
                     videoUrls.add(videoURI);
-                    Collections.sort(videoUrls, new CustomComparator());
+//                    Collections.sort(videoUrls, new CustomComparator());
+                    arrangeUrlsBasedOnVersionNumber();
                     runOnUiThread(new Runnable() {
                         public void run() {
                             hideProgressView();
@@ -565,6 +570,81 @@ public class ScanCardActivity extends AppCompatActivity {
         });
 
         thread.start();
+    }
+
+    public void arrangeUrlsBasedOnVersionNumber() {
+        if (videoUrls.size() != 4) {
+            return;
+        }
+
+        switch (versionNumber) {
+            case "1":
+                ArrayList<VideoURI> versionOne = new ArrayList<>();
+                for (VideoURI uri : videoUrls) {
+                    if (uri.name.equals("1")) {
+                        versionOne.add(uri);
+                    } else if (uri.name.equals("2"))  {
+                        versionOne.add(uri);
+                    } else if (uri.name.equals("3"))  {
+                        versionOne.add(uri);
+                    } else if (uri.name.equals("4"))  {
+                        versionOne.add(uri);
+                    }
+                }
+                videoUrls = versionOne;
+                break;
+
+            case "2":
+                ArrayList<VideoURI> versionTwo = new ArrayList<>();
+                for (VideoURI uri : videoUrls) {
+                    if (uri.name.equals("2")) {
+                        versionTwo.add(uri);
+                    } else if (uri.name.equals("3"))  {
+                        versionTwo.add(uri);
+                    } else if (uri.name.equals("4"))  {
+                        versionTwo.add(uri);
+                    } else if (uri.name.equals("1"))  {
+                        versionTwo.add(uri);
+                    }
+                }
+                videoUrls = versionTwo;
+                break;
+
+            case "3":
+                ArrayList<VideoURI> versionThree = new ArrayList<>();
+                for (VideoURI uri : videoUrls) {
+                    if (uri.name.equals("3")) {
+                        versionThree.add(uri);
+                    } else if (uri.name.equals("4"))  {
+                        versionThree.add(uri);
+                    } else if (uri.name.equals("1"))  {
+                        versionThree.add(uri);
+                    } else if (uri.name.equals("2"))  {
+                        versionThree.add(uri);
+                    }
+                }
+                videoUrls = versionThree;
+                break;
+
+            case "4":
+                ArrayList<VideoURI> versionFour = new ArrayList<>();
+                for (VideoURI uri : videoUrls) {
+                    if (uri.name.equals("4")) {
+                        versionFour.add(uri);
+                    } else if (uri.name.equals("1"))  {
+                        versionFour.add(uri);
+                    } else if (uri.name.equals("2"))  {
+                        versionFour.add(uri);
+                    } else if (uri.name.equals("3"))  {
+                        versionFour.add(uri);
+                    }
+                }
+                videoUrls = versionFour;
+                break;
+
+            default:
+                break;
+        }
     }
 }
 
