@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,10 +51,12 @@ public class MyVoiceFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     ListView listView;
-    ArrayList<User> myVoicesList;
+    SearchView searchView;
+    ArrayList<User> myVoicesList, filteredList;
     private static MyVoicesAdapter adapter;
     private ProgressDialog dialog;
     TextView noContentTextView;
+    String searchText = "";
 
     private Timer mTimer1;
     private TimerTask mTt1;
@@ -104,9 +107,11 @@ public class MyVoiceFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_my_voice, container, false);
 
         listView = (ListView) view.findViewById(R.id.myvoices_listview);
+        searchView = (SearchView) view.findViewById(R.id.my_voice_searchView);
         noContentTextView = (TextView) view.findViewById(R.id.my_voice_no_content_textview);
         myVoicesList = new ArrayList<>();
-        adapter = new MyVoicesAdapter(myVoicesList, getActivity().getApplicationContext());
+        filteredList = new ArrayList<>();
+        adapter = new MyVoicesAdapter(filteredList, getActivity().getApplicationContext());
         listView.setAdapter(adapter);
 //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
@@ -120,7 +125,37 @@ public class MyVoiceFragment extends Fragment {
 //        });
         dialog = new ProgressDialog(getActivity());
         getFriendsListCall();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filter(newText);
+                return false;
+            }
+        });
+
         return view;
+    }
+
+    private void filter(String query) {
+        query = query.toLowerCase();
+        searchText = query;
+
+        filteredList.clear();
+        for (User model : myVoicesList) {
+            final String text = model.name.toLowerCase();
+            if (text.contains(query)) {
+                filteredList.add(model);
+            }
+        }
+
+        adapter.notifyDataSetChanged();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -174,8 +209,8 @@ public class MyVoiceFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void stopTimer(){
-        if(mTimer1 != null){
+    private void stopTimer() {
+        if (mTimer1 != null) {
             mTimer1.cancel();
             mTimer1.purge();
         }
@@ -186,7 +221,7 @@ public class MyVoiceFragment extends Fragment {
         mTt1 = new TimerTask() {
             public void run() {
                 mTimerHandler.post(new Runnable() {
-                    public void run(){
+                    public void run() {
                         stopTimer();
                         getFriendsListCall();
                     }
@@ -199,7 +234,9 @@ public class MyVoiceFragment extends Fragment {
 
     // SERVICE API CALL
     public void getFriendsListCall() {
-        if (getActivity() == null) {  return; }
+        if (getActivity() == null) {
+            return;
+        }
 
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         noContentTextView.setVisibility(myVoicesList.isEmpty() ? View.VISIBLE : View.GONE);
@@ -217,9 +254,16 @@ public class MyVoiceFragment extends Fragment {
                             noContentTextView.setVisibility(View.VISIBLE);
                             noContentTextView.setText(userResponse.message);
                         } else {
-                            myVoicesList.clear();
-                            myVoicesList.addAll(userResponse.friendsList);
-                            adapter.notifyDataSetChanged();
+                            if (searchText.isEmpty()) {
+                                myVoicesList.clear();
+                                filteredList.clear();
+                                myVoicesList.addAll(userResponse.friendsList);
+                                filteredList.addAll(userResponse.friendsList);
+                                adapter.notifyDataSetChanged();
+                            } else {
+                                myVoicesList.clear();
+                                myVoicesList.addAll(userResponse.friendsList);
+                            }
                         }
 
                         startTimer();

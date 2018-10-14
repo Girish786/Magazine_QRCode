@@ -124,6 +124,13 @@ public class ScanCardActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        audioUri = null;
+        audioUrl = null;
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         killMediaPlayer();
@@ -227,7 +234,19 @@ public class ScanCardActivity extends AppCompatActivity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN && !dialog.isShowing()) {
+            if (currentVideoPlaying <= 5) {
+                currentVideoPlaying = 6;
+                playBackgroudVideo();
+            } else if (currentVideoPlaying == 6) {
+                vibratePhone();
+                currentVideoPlaying = 1;
+                if (redirect_url != null) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect_url));
+                    startActivity(browserIntent);
+                }
+            }
 
+            /*
             if (currentVideoPlaying == 1) {
                 vibratePhone();
                 if (nextPlay == 2) {
@@ -240,7 +259,7 @@ public class ScanCardActivity extends AppCompatActivity {
                     nextPlay = 4;
                     startTimer();
                     playBackgroudVideo();
-                }  else if (nextPlay == 4) {
+                } else if (nextPlay == 4) {
                     currentVideoPlaying = 4;
                     nextPlay = 5;
                     startTimer();
@@ -253,7 +272,7 @@ public class ScanCardActivity extends AppCompatActivity {
                         startActivity(browserIntent);
                     }
                 }
-            }
+            }*/
         }
         return super.onTouchEvent(event);
     }
@@ -327,7 +346,7 @@ public class ScanCardActivity extends AppCompatActivity {
             public void run() {
                 m2TimerHandler.post(new Runnable() {
                     public void run() {
-                        fullScreeGifView.setVisibility(View.GONE);
+//                        fullScreeGifView.setVisibility(View.GONE);
                         stopM2Timer();
                     }
                 });
@@ -343,14 +362,32 @@ public class ScanCardActivity extends AppCompatActivity {
             return;
         }
 
+        Log.i("", "CURRENT VIDEO PLAYING INDEX: " + currentVideoPlaying);
+        vibratePhone();
         vvVideo.setVideoURI(videoUrls.get(currentVideoPlaying - 1).uri);
         vvVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 mp.setVolume(0, 0);
                 mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT);
-                mp.setLooping(true);
+                mp.setLooping(false);
                 vvVideo.start();
+            }
+        });
+
+        vvVideo.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                if (currentVideoPlaying <= 5) {
+                    currentVideoPlaying += 1;
+                    playBackgroudVideo();
+                } else if (currentVideoPlaying == 6) {
+                    currentVideoPlaying = 1;
+                    if (redirect_url != null) {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect_url));
+                        startActivity(browserIntent);
+                    }
+                }
             }
         });
     }
@@ -382,43 +419,18 @@ public class ScanCardActivity extends AppCompatActivity {
     }
 
     public void vibratePhone() {
-        fullScreeGifView.setVisibility(View.VISIBLE);
-        startTimerForMiddleView();
-
 //        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
-//        } else {
-//            v.vibrate(1000);
+//            v.vibrate(VibrationEffect.createOneShot(versionNumber.equals("3") ? 2000 : 1000,VibrationEffect.DEFAULT_AMPLITUDE));
+//        }else{
+//            //deprecated in API 26
+//            v.vibrate(versionNumber.equals("3") ? 2000 : 1000);
 //        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Vibrator v1 = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            v1.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
-        } else {
-            try {
-                Vibrator v2 = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                v2.vibrate(1000);
-            } catch (Exception e) {
-                try {
-                    NotificationManager mNotificationManager = (NotificationManager)
-                            this.getSystemService(Context.NOTIFICATION_SERVICE);
-                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-                            this)
-                            .setDefaults(Notification.DEFAULT_VIBRATE);
-                    mBuilder.setAutoCancel(true);
-                    mNotificationManager.notify(1, mBuilder.build());
-                } catch (SecurityException se) {
-                    se.printStackTrace();
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
     }
 
 
     public void hideProgressView() {
-        if (dialog.isShowing() && videoJsonArray.length() == videoUrls.size()) {
+        if (dialog.isShowing() && (videoJsonArray.length() + 1) == videoUrls.size()) {
             dialog.dismiss();
             playBackgroudVideo();
         }
@@ -541,12 +553,41 @@ public class ScanCardActivity extends AppCompatActivity {
                                         .show();
                             } else {
                                 redirect_url = obj.getString("redirect_url");
-                                audioUrl = obj.getString("bgmusic_url");
-                                downloadAudioFromUrl();
-                                videoJsonArray = obj.getJSONArray("videodetails");
 
+                                switch (versionNumber) {
+                                    case "1":
+                                        audioUrl = obj.getString("bgmusic_url");
+                                        downloadAudioFromUrl();
+                                        downloadAllVideos(obj.getString("downloaded_artist_video"), "6");
+                                        break;
+
+                                    case "2":
+                                        audioUrl = "http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/Adele_Song_2.mp3";
+                                        downloadAudioFromUrl();
+                                        downloadAllVideos("http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/Adele_Artist_Video_2.mp4", "6");
+                                        break;
+
+                                    case "3":
+                                        audioUrl = "http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/Adele_Song_2.mp3";
+                                        downloadAudioFromUrl();
+                                        downloadAllVideos("http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/Adele_Artist_Video_2.mp4", "6");
+                                        break;
+
+                                    case "4":
+                                        audioUrl = "http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/adelemusic4.mp3";
+                                        downloadAudioFromUrl();
+                                        downloadAllVideos(obj.getString("downloaded_artist_video"), "6");
+                                        break;
+
+                                    default:
+                                        audioUrl = obj.getString("bgmusic_url");
+                                        downloadAudioFromUrl();
+                                        break;
+                                }
+
+                                videoJsonArray = obj.getJSONArray("videodetails");
                                 for (int i = 0, size = videoJsonArray.length(); i < size; i++) {
-                                    downloadAllVideos(videoJsonArray.getJSONObject(i).getString("scancard_video_url"), videoJsonArray.getJSONObject(i).getString("scancard_id"));
+                                    downloadAllVideos(videoJsonArray.getJSONObject(i).getString("scancard_video_url"), videoJsonArray.getJSONObject(i).getString("scancard_serial_no"));
                                 }
                             }
                         } catch (JSONException e) {
@@ -604,8 +645,8 @@ public class ScanCardActivity extends AppCompatActivity {
                     videoURI.name = name;
                     videoURI.uri = Uri.parse(Environment.getExternalStorageDirectory().toString() + "/load/" + name + ".mp4");
                     videoUrls.add(videoURI);
-//                    Collections.sort(videoUrls, new CustomComparator());
-                    arrangeUrlsBasedOnVersionNumber();
+                    Collections.sort(videoUrls, new CustomComparator());
+//                    arrangeUrlsBasedOnVersionNumber();
                     runOnUiThread(new Runnable() {
                         public void run() {
                             hideProgressView();
@@ -621,7 +662,7 @@ public class ScanCardActivity extends AppCompatActivity {
         thread.start();
     }
 
-    public ArrayList<VideoURI> arragenVideos_one( ArrayList<VideoURI> versione) {
+    public ArrayList<VideoURI> arragenVideos_one(ArrayList<VideoURI> versione) {
         ArrayList<VideoURI> versionOne = versione;
         for (VideoURI uri : videoUrls) {
             if (uri.name.equals("1")) {
@@ -643,11 +684,13 @@ public class ScanCardActivity extends AppCompatActivity {
             }
         }
 
-        if (versionOne.size() != 4) { arragenVideos_one(versionOne); }
+        if (versionOne.size() != 4) {
+            arragenVideos_one(versionOne);
+        }
         return versionOne;
     }
 
-    public ArrayList<VideoURI> arragenVideos_two( ArrayList<VideoURI> versione) {
+    public ArrayList<VideoURI> arragenVideos_two(ArrayList<VideoURI> versione) {
         ArrayList<VideoURI> versionTwo = versione;
         for (VideoURI uri : videoUrls) {
             if (uri.name.equals("2")) {
@@ -669,11 +712,13 @@ public class ScanCardActivity extends AppCompatActivity {
             }
         }
 
-        if (versionTwo.size() != 4) { arragenVideos_two(versionTwo); }
+        if (versionTwo.size() != 4) {
+            arragenVideos_two(versionTwo);
+        }
         return versionTwo;
     }
 
-    public ArrayList<VideoURI> arragenVideos_three( ArrayList<VideoURI> versione) {
+    public ArrayList<VideoURI> arragenVideos_three(ArrayList<VideoURI> versione) {
         ArrayList<VideoURI> versionThree = versione;
         for (VideoURI uri : videoUrls) {
             if (uri.name.equals("3")) {
@@ -695,11 +740,13 @@ public class ScanCardActivity extends AppCompatActivity {
             }
         }
 
-        if (versionThree.size() != 4) { arragenVideos_three(versionThree); }
+        if (versionThree.size() != 4) {
+            arragenVideos_three(versionThree);
+        }
         return versionThree;
     }
 
-    public ArrayList<VideoURI> arragenVideos_four( ArrayList<VideoURI> versione) {
+    public ArrayList<VideoURI> arragenVideos_four(ArrayList<VideoURI> versione) {
         ArrayList<VideoURI> versionFour = versione;
         for (VideoURI uri : videoUrls) {
             if (uri.name.equals("4")) {
@@ -721,7 +768,9 @@ public class ScanCardActivity extends AppCompatActivity {
             }
         }
 
-        if (versionFour.size() != 4) { arragenVideos_four(versionFour); }
+        if (versionFour.size() != 4) {
+            arragenVideos_four(versionFour);
+        }
         return versionFour;
     }
 
@@ -735,7 +784,7 @@ public class ScanCardActivity extends AppCompatActivity {
             case "1":
                 videoUrls = arragenVideos_one(new ArrayList<VideoURI>());
                 Log.i("", "arrangeUrlsBasedOnVersionNumber: ");
-            break;
+                break;
 
             case "2":
                 videoUrls = arragenVideos_two(new ArrayList<VideoURI>());

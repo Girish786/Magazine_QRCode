@@ -79,11 +79,11 @@ public class CardMainActivity extends AppCompatActivity {
         startActivityForResult( i,REQUEST_CODE_QR_SCAN);
     }
 
-    public void actionOnVersionFour(View view) {
-        versionNumber = "4";
-        Intent i = new Intent(CardMainActivity.this, DecoderActivity.class);
-        startActivityForResult( i,REQUEST_CODE_QR_SCAN);
-    }
+//    public void actionOnVersionFour(View view) {
+//        versionNumber = "4";
+//        Intent i = new Intent(CardMainActivity.this, DecoderActivity.class);
+//        startActivityForResult( i,REQUEST_CODE_QR_SCAN);
+//    }
 
     public void actionOnCancel(View view) {
         finish();

@@ -45,4 +45,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/points_overlay_view" />
 
+    <View
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/qr_code_bg"
+        app:layout_constraintBottom_toTopOf="@+id/flashlight_checkbox"
+        app:layout_constraintEnd_toEndOf="@+id/points_overlay_view"
+        app:layout_constraintStart_toStartOf="@+id/points_overlay_view"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
 </android.support.constraint.ConstraintLayout>

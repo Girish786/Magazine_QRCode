@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -49,13 +50,15 @@ public class MyChatsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     ListView listView;
+    SearchView searchView;
     TextView noContentTextView;
-    ArrayList<User> myChatsList;
+    ArrayList<User> myChatsList, filteredList;
     private static MyChatAdapter adapter;
     private ProgressDialog dialog;
     private Timer mTimer1;
     private TimerTask mTt1;
     private Handler mTimerHandler = new Handler();
+    String searchText = "";
 
 
     private OnFragmentInteractionListener mListener;
@@ -97,10 +100,12 @@ public class MyChatsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_chats, container, false);
         listView = (ListView) view.findViewById(R.id.mychats_listview);
+        searchView = (SearchView) view.findViewById(R.id.my_chat_searchView);
         noContentTextView = (TextView) view.findViewById(R.id.my_chat_no_content_textview);
 
         myChatsList = new ArrayList<>();
-        adapter = new MyChatAdapter(myChatsList, getActivity().getApplicationContext());
+        filteredList = new ArrayList<>();
+        adapter = new MyChatAdapter(filteredList, getActivity().getApplicationContext());
         listView.setAdapter(adapter);
         dialog = new ProgressDialog(getActivity());
         getConversationListCall();
@@ -116,7 +121,36 @@ public class MyChatsFragment extends Fragment {
 //            }
 //        });
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filter(newText);
+                return false;
+            }
+        });
+
         return view;
+    }
+
+    private void filter(String query) {
+        query = query.toLowerCase();
+        searchText = query;
+
+        filteredList.clear();
+        for (User model : myChatsList) {
+            final String text = model.name.toLowerCase();
+            if (text.contains(query)) {
+                filteredList.add(model);
+            }
+        }
+
+        adapter.notifyDataSetChanged();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -213,9 +247,16 @@ public class MyChatsFragment extends Fragment {
                             noContentTextView.setVisibility(View.VISIBLE);
                             noContentTextView.setText(userResponse.message);
                         } else {
-                            myChatsList.clear();
-                            myChatsList.addAll(userResponse.conversationList);
-                            adapter.notifyDataSetChanged();
+                            if (searchText.isEmpty()) {
+                                myChatsList.clear();
+                                filteredList.clear();
+                                myChatsList.addAll(userResponse.conversationList);
+                                filteredList.addAll(userResponse.conversationList);
+                                adapter.notifyDataSetChanged();
+                            } else {
+                                myChatsList.clear();
+                                myChatsList.addAll(userResponse.conversationList);
+                            }
                         }
 
                         startTimer();

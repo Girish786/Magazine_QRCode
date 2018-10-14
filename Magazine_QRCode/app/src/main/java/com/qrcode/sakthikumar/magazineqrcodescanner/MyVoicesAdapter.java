@@ -10,10 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -45,7 +47,6 @@ public class MyVoicesAdapter extends ArrayAdapter<User> implements View.OnClickL
         super(context, R.layout.my_voice_item, data);
         this.dataSet = data;
         this.mContext = context;
-
     }
 
     @Override
