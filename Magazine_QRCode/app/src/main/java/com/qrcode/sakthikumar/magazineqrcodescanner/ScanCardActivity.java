@@ -235,17 +235,50 @@ public class ScanCardActivity extends AppCompatActivity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN && !dialog.isShowing() && (videoJsonArray.length() + 1) == videoUrls.size() && audioUri != null && isAllDownloaded) {
-            if (currentVideoPlaying <= 5) {
-                currentVideoPlaying = 6;
-                playBackgroudVideo();
-            } else if (currentVideoPlaying == 6) {
-                currentVideoPlaying = 1;
-                if (redirect_url != null) {
-                    vibratePhone();
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect_url));
-                    startActivity(browserIntent);
+            if (versionNumber.equals("1")) {
+                if (currentVideoPlaying <= 3) {
+                    currentVideoPlaying = 6;
+                    playBackgroudVideo();
+                } else if (currentVideoPlaying == 6) {
+                    currentVideoPlaying = 1;
+                    if (redirect_url != null) {
+                        vibratePhone();
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect_url));
+                        startActivity(browserIntent);
+                    }
+                }
+            } else if (versionNumber.equals("2")) {
+                if (currentVideoPlaying == 1) {
+                    currentVideoPlaying = 2;
+                    playBackgroudVideo();
+                } else if (currentVideoPlaying == 2) {
+                    currentVideoPlaying = 3;
+                    playBackgroudVideo();
+                } else if (currentVideoPlaying == 3) {
+                    currentVideoPlaying = 6;
+                    playBackgroudVideo();
+                } else if (currentVideoPlaying == 6) {
+                    currentVideoPlaying = 1;
+                    if (redirect_url != null) {
+                        vibratePhone();
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect_url));
+                        startActivity(browserIntent);
+                    }
+                }
+            } else if (versionNumber.equals("3")) {
+                if (currentVideoPlaying <= 5) {
+                    currentVideoPlaying = 6;
+                    playBackgroudVideo();
+                } else if (currentVideoPlaying == 6) {
+                    currentVideoPlaying = 1;
+                    if (redirect_url != null) {
+                        vibratePhone();
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect_url));
+                        startActivity(browserIntent);
+                    }
                 }
             }
+
 
             /*
             if (currentVideoPlaying == 1) {
@@ -380,14 +413,57 @@ public class ScanCardActivity extends AppCompatActivity {
         vvVideo.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                if (currentVideoPlaying <= 5) {
-                    currentVideoPlaying += 1;
-                    playBackgroudVideo();
-                } else if (currentVideoPlaying == 6) {
-                    currentVideoPlaying = 1;
-                    if (redirect_url != null) {
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect_url));
-                        startActivity(browserIntent);
+//                if (currentVideoPlaying <= 5) {
+//                    currentVideoPlaying += 1;
+//                    playBackgroudVideo();
+//                } else if (currentVideoPlaying == 6) {
+//                    currentVideoPlaying = 1;
+//                    if (redirect_url != null) {
+//                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect_url));
+//                        startActivity(browserIntent);
+//                    }
+//                }
+
+
+                if (versionNumber.equals("1")) {
+                    if (currentVideoPlaying <= 2) {
+                        currentVideoPlaying += 1;
+                        playBackgroudVideo();
+                    } else if (currentVideoPlaying == 3) {
+                        currentVideoPlaying = 6;
+                        playBackgroudVideo();
+                    } else if (currentVideoPlaying == 6) {
+                        currentVideoPlaying = 1;
+                        if (redirect_url != null) {
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect_url));
+                            startActivity(browserIntent);
+                        }
+                    }
+                } else if (versionNumber.equals("2")) {
+                    if (currentVideoPlaying == 1) {
+                        currentVideoPlaying = 2;
+                        playBackgroudVideo();
+                    } else if (currentVideoPlaying == 6) {
+                        currentVideoPlaying = 1;
+                        if (redirect_url != null) {
+                            vibratePhone();
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect_url));
+                            startActivity(browserIntent);
+                        }
+                    } else {
+                        currentVideoPlaying = 6;
+                        playBackgroudVideo();
+                    }
+                } else if (versionNumber.equals("3")) {
+                    if (currentVideoPlaying <= 5) {
+                        currentVideoPlaying += 1;
+                        playBackgroudVideo();
+                    } else if (currentVideoPlaying == 6) {
+                        currentVideoPlaying = 1;
+                        if (redirect_url != null) {
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect_url));
+                            startActivity(browserIntent);
+                        }
                     }
                 }
             }
@@ -438,8 +514,8 @@ public class ScanCardActivity extends AppCompatActivity {
     public void vibratePhone() {
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            v.vibrate(VibrationEffect.createOneShot(versionNumber.equals("3") ? 2000 : 1000,VibrationEffect.DEFAULT_AMPLITUDE));
-        }else{
+            v.vibrate(VibrationEffect.createOneShot(versionNumber.equals("3") ? 2000 : 1000, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
             //deprecated in API 26
             v.vibrate(versionNumber.equals("3") ? 2000 : 1000);
         }
