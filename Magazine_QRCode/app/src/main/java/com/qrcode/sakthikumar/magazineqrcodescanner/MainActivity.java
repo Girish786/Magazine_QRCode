@@ -24,6 +24,11 @@ import android.widget.VideoView;
 
 import java.util.List;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
+
+
 public class MainActivity extends AppCompatActivity {
 
     VideoView vvVideo;
@@ -32,11 +37,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // [START crash_enable_debug_mode]
+        final Fabric fabric = new Fabric.Builder(this)
+                .kits(new Crashlytics())
+                .debuggable(true)  // Enables Crashlytics debugger
+                .build();
+        Fabric.with(fabric);
+        // [END crash_enable_debug_mode]
+        Fabric.with(this, new Crashlytics());
         playBackgroudVideo();
 
         Toolbar topToolBar = (Toolbar) findViewById(R.id.toptoolbar);
         setSupportActionBar(topToolBar);
-        ActionBar actionBar = getSupportActionBar();;
+        ActionBar actionBar = getSupportActionBar();
+        ;
         actionBar.setDisplayHomeAsUpEnabled(false);
     }
 
@@ -48,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() { }
+    public void onBackPressed() {
+    }
 
     // Initialize Methods
     public void playBackgroudVideo() {
@@ -69,13 +84,14 @@ public class MainActivity extends AppCompatActivity {
 
     // Action Methods
     public void actionOnScanACard(View v) {
+//        Crashlytics.getInstance().crash();
         Intent cardActivityIntent = new Intent(getApplicationContext(), CardMainActivity.class);
-        startActivity(cardActivityIntent );
+        startActivity(cardActivityIntent);
     }
 
     public void actionOnChatWithFriends(View v) {
         Intent cardActivityIntent = new Intent(getApplicationContext(), ChatMainActivity.class);
-        startActivity(cardActivityIntent );
+        startActivity(cardActivityIntent);
     }
 
     public void actionOnScanAMagazine(View v) {
@@ -84,15 +100,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void actionOnLogOut(View v) {
-        PrefManager.getInstance(getApplicationContext()).setUserId("");
-        PrefManager.getInstance(getApplicationContext()).setUserName("");
-        ActivityManager mngr = (ActivityManager) getSystemService( ACTIVITY_SERVICE );
-        List<ActivityManager.RunningTaskInfo> taskList = mngr.getRunningTasks(10);
-        if(taskList.get(0).numActivities == 1 && taskList.get(0).topActivity.getClassName().equals(this.getClass().getName())) {
+//        PrefManager.getInstance(getApplicationContext()).setUserId("");
+//        PrefManager.getInstance(getApplicationContext()).setUserName("");
+//        ActivityManager mngr = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+//        List<ActivityManager.RunningTaskInfo> taskList = mngr.getRunningTasks(10);
+//        if (taskList.get(0).numActivities == 1 && taskList.get(0).topActivity.getClassName().equals(this.getClass().getName())) {
             Intent goToNextActivity = new Intent(getApplicationContext(), LogginActivity.class);
             startActivity(goToNextActivity);
-        } else {
-            finish();
-        }
+//        } else {
+//            finish();
+//        }
     }
 }

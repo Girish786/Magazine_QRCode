@@ -69,10 +69,10 @@ public class QRCodeScanActivity extends AppCompatActivity {
 
     // Action Methods
     public void actionOnScanQRCode(View v) {
-//        Intent scanBarCodeActivity = new Intent(getApplicationContext(), ScannedBarcodeActivity.class);
-//        startActivity(scanBarCodeActivity );
-        Intent i = new Intent(QRCodeScanActivity.this, DecoderActivity.class);
+        Intent i = new Intent(QRCodeScanActivity.this, QrCodeActivity.class);
         startActivityForResult( i,REQUEST_CODE_QR_SCAN);
+//        Intent i = new Intent(QRCodeScanActivity.this, DecoderActivity.class);
+//        startActivityForResult( i,REQUEST_CODE_QR_SCAN);
     }
 
     // Action Methods

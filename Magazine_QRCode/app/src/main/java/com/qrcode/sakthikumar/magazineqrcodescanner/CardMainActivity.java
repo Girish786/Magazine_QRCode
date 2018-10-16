@@ -63,19 +63,19 @@ public class CardMainActivity extends AppCompatActivity {
     //Button Action Methods
     public void actionOnVersionOne(View view) {
         versionNumber = "1";
-        Intent i = new Intent(CardMainActivity.this, DecoderActivity.class);
+        Intent i = new Intent(CardMainActivity.this, QrCodeActivity.class);
         startActivityForResult( i,REQUEST_CODE_QR_SCAN);
     }
 
     public void actionOnVersionTwo(View view) {
         versionNumber = "2";
-        Intent i = new Intent(CardMainActivity.this, DecoderActivity.class);
+        Intent i = new Intent(CardMainActivity.this, QrCodeActivity.class);
         startActivityForResult( i,REQUEST_CODE_QR_SCAN);
     }
 
     public void actionOnVersionThree(View view) {
         versionNumber = "3";
-        Intent i = new Intent(CardMainActivity.this, DecoderActivity.class);
+        Intent i = new Intent(CardMainActivity.this, QrCodeActivity.class);
         startActivityForResult( i,REQUEST_CODE_QR_SCAN);
     }
 

@@ -67,6 +67,7 @@ public class ScanCardActivity extends AppCompatActivity {
     String audioUrl;
     GifView fullScreeGifView;
     Button permissionBtn;
+    Boolean isAllDownloaded = false;
 
     static Uri firstLocalVideo;
     static Uri secondLocalVideo;
@@ -215,8 +216,8 @@ public class ScanCardActivity extends AppCompatActivity {
             case 0:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     permissionBtn.setVisibility(View.GONE);
-                    dialog.show();
-//                    actioOnGetAudioUrl();
+//                    dialog.show();
+                    playLoaderVideo();
                     getVideoUrlsFromServer();
                 } else {
                     // Permission Denied
@@ -233,14 +234,14 @@ public class ScanCardActivity extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN && !dialog.isShowing()) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN && !dialog.isShowing() && (videoJsonArray.length() + 1) == videoUrls.size() && audioUri != null && isAllDownloaded) {
             if (currentVideoPlaying <= 5) {
                 currentVideoPlaying = 6;
                 playBackgroudVideo();
             } else if (currentVideoPlaying == 6) {
-                vibratePhone();
                 currentVideoPlaying = 1;
                 if (redirect_url != null) {
+                    vibratePhone();
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirect_url));
                     startActivity(browserIntent);
                 }
@@ -281,8 +282,9 @@ public class ScanCardActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             permissionBtn.setVisibility(View.GONE);
             if (isNetworkConnected()) {
-                dialog.show();
+//                dialog.show();
 //                actioOnGetAudioUrl();
+                playLoaderVideo();
                 getVideoUrlsFromServer();
             } else {
                 permissionBtn.setVisibility(View.VISIBLE);
@@ -392,6 +394,21 @@ public class ScanCardActivity extends AppCompatActivity {
         });
     }
 
+    public void playLoaderVideo() {
+        vvVideo.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.loading_video));
+
+        vvVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setVolume(0, 0);
+                mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT);
+                mp.setLooping(true);
+                vvVideo.start();
+            }
+        });
+    }
+
+
     public void playAudio(Uri url) throws Exception {
         if (mediaPlayer == null) {
             mediaPlayer = MediaPlayer.create(this, url);
@@ -419,20 +436,28 @@ public class ScanCardActivity extends AppCompatActivity {
     }
 
     public void vibratePhone() {
-//        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            v.vibrate(VibrationEffect.createOneShot(versionNumber.equals("3") ? 2000 : 1000,VibrationEffect.DEFAULT_AMPLITUDE));
-//        }else{
-//            //deprecated in API 26
-//            v.vibrate(versionNumber.equals("3") ? 2000 : 1000);
-//        }
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(versionNumber.equals("3") ? 2000 : 1000,VibrationEffect.DEFAULT_AMPLITUDE));
+        }else{
+            //deprecated in API 26
+            v.vibrate(versionNumber.equals("3") ? 2000 : 1000);
+        }
     }
 
 
     public void hideProgressView() {
-        if (dialog.isShowing() && (videoJsonArray.length() + 1) == videoUrls.size()) {
-            dialog.dismiss();
+        if ((videoJsonArray.length() + 1) == videoUrls.size() && audioUri != null && !isAllDownloaded) {
+//            dialog.dismiss();
+//            Toast.makeText(ScanCardActivity.this, "Downloaded all the videos and audio and ready to play...", Toast.LENGTH_SHORT).show();
+            isAllDownloaded = true;
             playBackgroudVideo();
+
+            try {
+                playAudio(audioUri);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -474,6 +499,7 @@ public class ScanCardActivity extends AppCompatActivity {
 
 
     private void downloadAudioFromUrl() {
+//        Toast.makeText(ScanCardActivity.this, "Start downloading audio url: ", Toast.LENGTH_SHORT).show();
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 try {
@@ -503,15 +529,20 @@ public class ScanCardActivity extends AppCompatActivity {
                     fos.close();
                     is.close();
                     audioUri = Uri.parse(Environment.getExternalStorageDirectory().toString() + "/load/" + "background_audio.mp3");
-                    try {
-                        if (audioUri != null) {
-                            playAudio(audioUri);
+//                    try {
+//                        if ((videoJsonArray.length() + 1) == videoUrls.size() && (audioUri != null)) {
+//                            playAudio(audioUri);
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+//                            Toast.makeText(ScanCardActivity.this, "Got Audio file from server: ", Toast.LENGTH_SHORT).show();
+                            hideProgressView();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
+                    });
                 } catch (final IOException e) {
                     e.printStackTrace();
                 }
@@ -524,6 +555,7 @@ public class ScanCardActivity extends AppCompatActivity {
 
 
     public void getVideoUrlsFromServer() {
+//        Toast.makeText(this, "Started calling get videos url api....", Toast.LENGTH_SHORT).show();
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest request = new StringRequest(Request.Method.POST, Constants.SCAN_CARD_VIDEO_ACCESS_URL,
                 new Response.Listener<String>() {
@@ -531,6 +563,7 @@ public class ScanCardActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         Log.e("Response", response.toString());
                         try {
+//                            Toast.makeText(ScanCardActivity.this, "Got all videos urls from api....", Toast.LENGTH_SHORT).show();
                             JSONObject obj = new JSONObject(response);
                             String message = obj.getString("message");
                             if (obj.isNull("videodetails")) {
@@ -553,7 +586,7 @@ public class ScanCardActivity extends AppCompatActivity {
                                         .show();
                             } else {
                                 redirect_url = obj.getString("redirect_url");
-
+//                                Toast.makeText(ScanCardActivity.this, "Got redirect_url from api....", Toast.LENGTH_SHORT).show();
                                 switch (versionNumber) {
                                     case "1":
                                         audioUrl = obj.getString("bgmusic_url");
@@ -613,6 +646,7 @@ public class ScanCardActivity extends AppCompatActivity {
     }
 
     private void downloadAllVideos(final String videoUrl, final String name) {
+//        Toast.makeText(ScanCardActivity.this, "Started video downloading: " + name, Toast.LENGTH_SHORT).show();
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 try {
@@ -649,6 +683,7 @@ public class ScanCardActivity extends AppCompatActivity {
 //                    arrangeUrlsBasedOnVersionNumber();
                     runOnUiThread(new Runnable() {
                         public void run() {
+//                            Toast.makeText(ScanCardActivity.this, "Got video: " + name, Toast.LENGTH_SHORT).show();
                             hideProgressView();
                         }
                     });
