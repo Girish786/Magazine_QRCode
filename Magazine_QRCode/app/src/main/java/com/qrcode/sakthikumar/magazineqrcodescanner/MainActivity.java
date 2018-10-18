@@ -84,9 +84,11 @@ public class MainActivity extends AppCompatActivity {
 
     // Action Methods
     public void actionOnScanACard(View v) {
-//        Crashlytics.getInstance().crash();
         Intent cardActivityIntent = new Intent(getApplicationContext(), CardMainActivity.class);
         startActivity(cardActivityIntent);
+
+//        Intent cardActivityIntent = new Intent(getApplicationContext(), VideoDownloaderActivity.class);
+//        startActivity(cardActivityIntent);
     }
 
     public void actionOnChatWithFriends(View v) {
@@ -96,6 +98,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void actionOnScanAMagazine(View v) {
         Intent goToNextActivity = new Intent(getApplicationContext(), QRCodeScanActivity.class);
+        startActivity(goToNextActivity);
+    }
+
+    public void actionOnWorldRadio(View v) {
+        Intent goToNextActivity = new Intent(getApplicationContext(), WebViewActivity.class);
         startActivity(goToNextActivity);
     }
 

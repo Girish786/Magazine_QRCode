@@ -10,8 +10,12 @@
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -32,9 +36,10 @@
             android:value="false" />
         <!-- [END crash_disable_collection] -->
 
-        <!--<meta-data-->
-            <!--android:name="io.fabric.ApiKey"-->
-            <!--android:value="AIzaSyCatjNR4KRSv7pi8BcqXjo2y_t5kE21VjQ" />-->
+
+        <!-- <meta-data -->
+        <!-- android:name="io.fabric.ApiKey" -->
+        <!-- android:value="AIzaSyCatjNR4KRSv7pi8BcqXjo2y_t5kE21VjQ" /> -->
 
         <activity android:name=".SplashActivity">
             <intent-filter>
@@ -73,7 +78,9 @@
         <activity android:name=".CardMainActivity" />
         <activity android:name=".ChatMainActivity" />
         <activity android:name=".ChatActivity" />
-        <activity android:name=".DecoderActivity"></activity>
+        <activity android:name=".DecoderActivity" />
+        <activity android:name=".VideoDownloaderActivity" />
+        <activity android:name=".WebViewActivity"></activity>
     </application>
 
 </manifest>
