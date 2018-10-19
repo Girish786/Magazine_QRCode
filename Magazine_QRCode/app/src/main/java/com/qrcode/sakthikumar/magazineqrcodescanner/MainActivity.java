@@ -102,8 +102,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void actionOnWorldRadio(View v) {
-        Intent goToNextActivity = new Intent(getApplicationContext(), WebViewActivity.class);
-        startActivity(goToNextActivity);
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://radio.garden/"));
+        startActivity(browserIntent);
+//        Intent goToNextActivity = new Intent(getApplicationContext(), WebViewActivity.class);
+//        startActivity(goToNextActivity);
     }
 
     public void actionOnLogOut(View v) {

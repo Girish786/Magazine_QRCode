@@ -37,6 +37,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.DownloadListener;
+import com.androidnetworking.interfaces.DownloadProgressListener;
 import com.cunoraz.gifview.library.GifView;
 import com.google.gson.JsonObject;
 
@@ -667,25 +672,25 @@ public class ScanCardActivity extends AppCompatActivity {
                                     case "1":
                                         audioUrl = obj.getString("bgmusic_url");
                                         downloadAudioFromUrl();
-                                        downloadAllVideos(obj.getString("downloaded_artist_video"), "6");
+                                        downloadVideothrdPartyApi(obj.getString("downloaded_artist_video"), "6");
                                         break;
 
                                     case "2":
                                         audioUrl = "http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/Adele_Song_2.mp3";
                                         downloadAudioFromUrl();
-                                        downloadAllVideos("http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/Adele_Artist_Video_2.mp4", "6");
+                                        downloadVideothrdPartyApi("http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/Adele_Artist_Video_2.mp4", "6");
                                         break;
 
                                     case "3":
                                         audioUrl = "http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/Adele_Song_2.mp3";
                                         downloadAudioFromUrl();
-                                        downloadAllVideos("http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/Adele_Artist_Video_2.mp4", "6");
+                                        downloadVideothrdPartyApi("http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/Adele_Artist_Video_2.mp4", "6");
                                         break;
 
                                     case "4":
                                         audioUrl = "http://uvstaging.youniquevoice.com/uvmobileappsrequirments/demoappforvideotest/adelemusic4.mp3";
                                         downloadAudioFromUrl();
-                                        downloadAllVideos(obj.getString("downloaded_artist_video"), "6");
+                                        downloadVideothrdPartyApi(obj.getString("downloaded_artist_video"), "6");
                                         break;
 
                                     default:
@@ -696,7 +701,7 @@ public class ScanCardActivity extends AppCompatActivity {
 
                                 videoJsonArray = obj.getJSONArray("videodetails");
                                 for (int i = 0, size = videoJsonArray.length(); i < size; i++) {
-                                    downloadAllVideos(videoJsonArray.getJSONObject(i).getString("scancard_video_url"), videoJsonArray.getJSONObject(i).getString("scancard_serial_no"));
+                                    downloadVideothrdPartyApi(videoJsonArray.getJSONObject(i).getString("scancard_video_url"), videoJsonArray.getJSONObject(i).getString("scancard_serial_no"));
                                 }
                             }
                         } catch (JSONException e) {
@@ -719,6 +724,41 @@ public class ScanCardActivity extends AppCompatActivity {
         };
 
         requestQueue.add(request);
+    }
+
+    public void downloadVideothrdPartyApi(final String videoUrl, final String name) {
+        String PATH = Environment.getExternalStorageDirectory().toString() + "/load";
+        AndroidNetworking.download(videoUrl, PATH, name + ".mp4")
+                .setTag("downloadTest")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .setDownloadProgressListener(new DownloadProgressListener() {
+                    @Override
+                    public void onProgress(long bytesDownloaded, long totalBytes) {
+//                        int progress = (int) (bytesDownloaded * 100 / totalBytes);
+//                        progress_three.setText("Progress = " + progress);
+                    }
+                })
+                .startDownload(new DownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        VideoURI videoURI = new VideoURI();
+                        videoURI.name = name;
+                        videoURI.uri = Uri.parse(Environment.getExternalStorageDirectory().toString() + "/load/" + name + ".mp4");
+                        videoUrls.add(videoURI);
+                        Collections.sort(videoUrls, new CustomComparator());
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                hideProgressView();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+//                        Toast.makeText(VideoDownloaderActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void downloadAllVideos(final String videoUrl, final String name) {
