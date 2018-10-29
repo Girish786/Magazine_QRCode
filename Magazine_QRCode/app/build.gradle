@@ -1,11 +1,9 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
-
 
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.qrcode.sakthikumar.magazineqrcodescanner"
+        applicationId "com.uniquevoices.uvapps"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
@@ -47,9 +45,6 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3'
-    implementation 'com.google.firebase:firebase-core:16.0.4'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
     implementation 'com.amitshekhar.android:android-networking:1.0.2'
 }
 
-apply plugin: 'com.google.gms.google-services'

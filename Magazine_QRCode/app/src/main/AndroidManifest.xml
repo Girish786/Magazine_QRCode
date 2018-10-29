@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.qrcode.sakthikumar.magazineqrcodescanner">
+    package="com.uniquevoices.uvapps">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -21,9 +21,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_new"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_new"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
@@ -41,7 +41,7 @@
         <!-- android:name="io.fabric.ApiKey" -->
         <!-- android:value="AIzaSyCatjNR4KRSv7pi8BcqXjo2y_t5kE21VjQ" /> -->
 
-        <activity android:name=".SplashActivity">
+        <activity android:name="com.uniquevoices.uvapps.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,38 +49,40 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LogginActivity"
+            android:name="com.uniquevoices.uvapps.LogginActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/PlayerTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.uniquevoices.uvapps.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".QRCodeScanActivity"
+            android:name="com.uniquevoices.uvapps.QRCodeScanActivity"
+            android:theme="@style/PlayerTheme"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ScannedBarcodeActivity"
+            android:name="com.uniquevoices.uvapps.ScannedBarcodeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".YoutubePlayerActivity"
+            android:name="com.uniquevoices.uvapps.YoutubePlayerActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:theme="@style/PlayerTheme" />
         <activity
-            android:name=".VimeoPlayerActivity"
+            android:name="com.uniquevoices.uvapps.VimeoPlayerActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:theme="@style/PlayerTheme" />
         <activity
-            android:name=".VideoViewPlayerActivity"
+            android:name="com.uniquevoices.uvapps.VideoViewPlayerActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:theme="@style/PlayerTheme" />
-        <activity android:name=".ScanCardActivity" />
-        <activity android:name=".CardMainActivity" />
-        <activity android:name=".ChatMainActivity" />
-        <activity android:name=".ChatActivity" />
-        <activity android:name=".DecoderActivity" />
-        <activity android:name=".VideoDownloaderActivity" />
-        <activity android:name=".WebViewActivity"></activity>
+        <activity android:name="com.uniquevoices.uvapps.ScanCardActivity" />
+        <activity android:name="com.uniquevoices.uvapps.CardMainActivity" />
+        <activity android:name="com.uniquevoices.uvapps.ChatMainActivity" />
+        <activity android:name="com.uniquevoices.uvapps.ChatActivity" />
+        <activity android:name="com.uniquevoices.uvapps.DecoderActivity" />
+        <activity android:name="com.uniquevoices.uvapps.VideoDownloaderActivity" />
+        <activity android:name="com.uniquevoices.uvapps.WebViewActivity"></activity>
     </application>
 
 </manifest>
